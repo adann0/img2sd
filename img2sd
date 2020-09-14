@@ -1,0 +1,39 @@
+#!/bin/bash
+
+echo """*** img2sd ***
+Version : macOS Catalina 10.15.6
+
+This tool is used to flash a SD Card with an .img on macOS (especialy suitable for Raspbian).
+
+You'll may need administrator privileges to use this tool.
+
+PRESS ENTER TO CONTINUE OR CTRL+C TO ABORT.
+"""
+
+read
+
+if [[ "$OSTYPE" != "darwin"* ]]; then
+	echo "Your OS is not supported."
+	exit
+fi
+
+echo "======================"
+diskutil list
+echo "======================"      
+
+echo "-> Which /dev/diskX should be used ? Enter the value of X : "
+read X
+
+diskutil unmountDisk /dev/disk$X
+
+echo "-> Drag and Drop your Image : "
+read ImagePath
+
+echo "-> This can take a while. (Check the progress by pressing CTRL+T)"
+sudo dd bs=1m if=$ImagePath of=/dev/rdisk$X; sync
+
+sleep 5
+
+sudo diskutil eject /dev/rdisk$X
+
+echo "-> DONE ;D"
